@@ -67,14 +67,14 @@ cropsRouter.post('/watchlist/toggle', async (c) => {
 // POST /crops/seed — cria produtos padrão se não existirem
 cropsRouter.post('/seed', async (c) => {
   const defaultCrops = [
-    { name: 'Soja', unit: 'saca (60kg)', latestPrice: 132.50 },
-    { name: 'Milho', unit: 'saca (60kg)', latestPrice: 65.20 },
-    { name: 'Trigo', unit: 'saca (60kg)', latestPrice: 78.40 },
-    { name: 'Algodão', unit: 'arroba (15kg)', latestPrice: 135.10 },
-    { name: 'Café Arábica', unit: 'saca (60kg)', latestPrice: 1140.00 },
-    { name: 'Cana-de-Açúcar', unit: 'tonelada', latestPrice: 165.50 },
-    { name: 'Arroz', unit: 'saca (50kg)', latestPrice: 115.00 },
-    { name: 'Feijão', unit: 'saca (60kg)', latestPrice: 295.00 },
+    { name: 'Soja', unit: 'saca (60kg)', latestPrice: 141.50 },
+    { name: 'Milho', unit: 'saca (60kg)', latestPrice: 72.80 },
+    { name: 'Trigo', unit: 'saca (60kg)', latestPrice: 84.40 },
+    { name: 'Algodão', unit: 'arroba (15kg)', latestPrice: 142.20 },
+    { name: 'Café Arábica', unit: 'saca (60kg)', latestPrice: 1780.00 },
+    { name: 'Cana-de-Açúcar', unit: 'tonelada', latestPrice: 182.50 },
+    { name: 'Arroz', unit: 'saca (50kg)', latestPrice: 124.00 },
+    { name: 'Feijão', unit: 'saca (60kg)', latestPrice: 345.00 },
   ]
 
   const results = await Promise.all(

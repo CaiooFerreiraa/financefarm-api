@@ -3,10 +3,22 @@ import { prisma } from '../lib/prisma.js'
 
 export const farmsRouter = new Hono()
 
-// GET /farms?userId=xxx
+// GET /farms?userId=xxx&email=xxx
 farmsRouter.get('/', async (c) => {
   const userId = c.req.query('userId')
+  const email = c.req.query('email')
   if (!userId) return c.json({ error: 'userId required' }, 400)
+
+  // Sync user email if provided
+  if (email) {
+    const user = await prisma.user.findUnique({ where: { clerkId: userId } })
+    if (user && user.email !== email) {
+      await prisma.user.update({ where: { clerkId: userId }, data: { email } })
+    } else if (!user) {
+      // Create user if they don't exist yet but try to fetch farms
+      await prisma.user.create({ data: { clerkId: userId, email } })
+    }
+  }
 
   const farms = await prisma.farm.findMany({
     where: { owner: { clerkId: userId } },
@@ -18,11 +30,13 @@ farmsRouter.get('/', async (c) => {
 // POST /farms
 farmsRouter.post('/', async (c) => {
   const body = await c.req.json()
-  const { name, clerkId } = body
+  const { name, clerkId, email } = body
 
   let user = await prisma.user.findUnique({ where: { clerkId } })
   if (!user) {
-    user = await prisma.user.create({ data: { clerkId, name } })
+    user = await prisma.user.create({ data: { clerkId, name, email } })
+  } else if (email && user.email !== email) {
+    user = await prisma.user.update({ where: { clerkId }, data: { email } })
   }
 
   const farm = await prisma.farm.create({

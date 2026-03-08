@@ -1,0 +1,80 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  clerkId   String   @unique
+  name      String?
+  email     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  farms     Farm[]
+  watchlist MarketWatchlist[]
+}
+
+model Farm {
+  id        String   @id @default(cuid())
+  name      String
+  ownerId   String
+  owner     User     @relation(fields: [ownerId], references: [id])
+  crops     FarmCrop[]
+  expenses  Expense[]
+  forecasts ProductionForecast[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Crop {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  unit      String   // e.g. "saca", "kg", "ton"
+  latestPrice Float?  // Preço de cotação atual
+  farmCrops FarmCrop[]
+  forecasts ProductionForecast[]
+  watchlist MarketWatchlist[]
+}
+
+
+model FarmCrop {
+  farmId    String
+  cropId    String
+  farm      Farm     @relation(fields: [farmId], references: [id])
+  crop      Crop     @relation(fields: [cropId], references: [id])
+  @@id([farmId, cropId])
+}
+
+model Expense {
+  id          String   @id @default(cuid())
+  amount      Float
+  date        DateTime @default(now())
+  category    String
+  description String?
+  farmId      String
+  farm        Farm     @relation(fields: [farmId], references: [id])
+}
+
+model ProductionForecast {
+  id             String   @id @default(cuid())
+  farmId         String
+  cropId         String
+  predictedYield Float
+  unitPrice      Float
+  estimatedCost  Float
+  farm           Farm     @relation(fields: [farmId], references: [id])
+  crop           Crop     @relation(fields: [cropId], references: [id])
+}
+
+model MarketWatchlist {
+  userId String
+  cropId String
+  user   User   @relation(fields: [userId], references: [id])
+  crop   Crop   @relation(fields: [cropId], references: [id])
+  @@id([userId, cropId])
+}
